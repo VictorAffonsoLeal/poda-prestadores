@@ -240,7 +240,12 @@ export default function PrestadorDashboardPage() {
                   </div>
                   <p className="text-sm font-medium text-slate-700 mb-2 truncate">{os.address}</p>
                   {os.fotoConclusao && (
-                    <a href={os.fotoConclusao} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1">
+                    <a 
+                      href={os.fotoConclusao.startsWith("http://") ? os.fotoConclusao.replace("http://", "https://") : os.fotoConclusao} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-xs font-bold text-blue-600 hover:underline flex items-center gap-1"
+                    >
                       <Camera className="w-3 h-3" /> Ver Foto do Serviço
                     </a>
                   )}
