@@ -6,6 +6,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 
+import { useToast } from "@/context/ToastContext";
+
 interface AuthContextType {
   user: User | null;
   prestadorData: any | null;
@@ -19,6 +21,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [prestadorData, setPrestadorData] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { showToast } = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -38,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             await signOut(auth);
             setPrestadorData(null);
             setUser(null);
-            alert("Acesso negado. Conta de prestador não encontrada.");
+            showToast("Acesso negado. Conta de prestador não encontrada.", "erro");
             router.push("/login");
           }
         } catch (error) {

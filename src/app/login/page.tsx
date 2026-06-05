@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import { Mail, Lock, Eye, EyeOff, Briefcase } from "lucide-react";
+import { useToast } from "@/context/ToastContext";
 
 export default function LoginPrestadorPage() {
   const router = useRouter();
@@ -12,6 +14,7 @@ export default function LoginPrestadorPage() {
   const [senha, setSenha] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const { showToast } = useToast();
 
   const fazerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,60 +25,96 @@ export default function LoginPrestadorPage() {
       router.push("/");
     } catch (error: any) {
       console.error("Erro ao fazer login:", error);
-      alert("Credenciais inválidas. Verifique seu e-mail e senha e tente novamente.");
+      showToast("Credenciais inválidas. Verifique seu e-mail e senha e tente novamente.", "erro");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center p-4 py-8 justify-center">
-      <section className="w-full max-w-sm mx-auto flex flex-col items-center justify-center">
-        <header className="text-center mb-8">
-          <div className="text-5xl mb-4">🌳</div>
-          <h1 className="text-3xl font-bold text-emerald-800">Portal do Prestador</h1>
-          <p className="text-slate-600 mt-2">Acesse suas Ordens de Serviço</p>
-        </header>
-        
-        <main className="w-full bg-white p-8 rounded-xl shadow-lg border border-slate-200">
+    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logotipo/Cabeçalho */}
+        <div className="text-center mb-8">
+          <div className="inline-flex p-3.5 bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-2xl shadow-md mb-4">
+            <Briefcase className="w-8 h-8" />
+          </div>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Portal do Prestador</h1>
+          <p className="text-slate-500 text-sm mt-2">
+            Acesse seu painel corporativo e gerencie suas Ordens de Serviço
+          </p>
+        </div>
+
+        {/* Card do Formulário */}
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200/80 relative overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+
           <form onSubmit={fazerLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-bold text-slate-700">E-mail Corporativo</label>
-              <input 
-                type="email" 
-                value={email} 
-                onChange={e => setEmail(e.target.value)} 
-                className="mt-1 block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm text-slate-900 font-medium" 
-                placeholder="contato@empresa.com" 
-                required 
-              />
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                E-mail Corporativo
+              </label>
+              <div className="relative">
+                <Mail className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input 
+                  type="email" 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  className="pl-11 pr-4 py-2.5 w-full border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-900 bg-white placeholder-slate-400 shadow-sm transition-all focus:outline-none" 
+                  placeholder="exemplo@empresa.com" 
+                  required 
+                />
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-bold text-slate-700">Senha</label>
-              <div className="relative mt-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                Senha
+              </label>
+              <div className="relative">
+                <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input 
                   type={showPassword ? "text" : "password"} 
                   value={senha} 
                   onChange={e => setSenha(e.target.value)} 
-                  className="block w-full px-3 py-2 bg-white border border-slate-300 rounded-md text-sm pr-10 text-slate-900 font-medium" 
-                  placeholder="Sua senha" 
+                  className="pl-11 pr-11 py-2.5 w-full border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 text-slate-900 bg-white placeholder-slate-400 shadow-sm transition-all focus:outline-none" 
+                  placeholder="Sua senha de acesso" 
                   required 
                 />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-500">👁️</button>
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)} 
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
-            <button type="submit" disabled={isLoading} className="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-md hover:bg-emerald-700 mt-6 disabled:opacity-50">
-              {isLoading ? "Entrando..." : "Acessar Sistema"}
+            <button 
+              type="submit" 
+              disabled={isLoading} 
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-3 px-4 rounded-xl hover:from-emerald-700 hover:to-teal-700 active:scale-[0.98] transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:pointer-events-none mt-6 cursor-pointer flex items-center justify-center"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                "Acessar Sistema"
+              )}
             </button>
           </form>
-        </main>
-        
-        <footer className="text-center mt-6">
-          <p className="text-sm text-slate-600 font-medium">Ainda não é parceiro? <Link href="/cadastro" className="text-emerald-700 hover:underline">Solicite o credenciamento.</Link></p>
-        </footer>
-      </section>
+        </div>
+
+        {/* Footer */}
+        <div className="text-center mt-6">
+          <p className="text-sm text-slate-500">
+            Ainda não é parceiro credenciado?{" "}
+            <Link href="/cadastro" className="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+              Solicite o credenciamento.
+            </Link>
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
